@@ -1,0 +1,47 @@
+{
+    "name": "anomander.revan/sanitizr",
+    "description": "A centralized, customizable input & security sanitization package for laravel",
+    "authors": [
+        {
+            "role": "Developer",
+            "name": "Kieran White",
+            "email": "kieranwhite84@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Anomander\\Sanitizr\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Anomander\\Sanitizr\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=8.1",
+        "illuminate/support": ">=11.0"
+
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "preferred-install": "dist",
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Anomander\\Sanitizr\\SanitizrServiceProvider"
+            ]
+        }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.11",
+        "pestphp/pest": "^3.7"
+    }
+}
