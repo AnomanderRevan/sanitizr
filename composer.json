@@ -36,8 +36,11 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Anomander\\Sanitizr\\SanitizrServiceProvider"
-            ]
+                "Anomander\\Sanitizr\\Providers\\SanitizrServiceProvider"
+            ],
+            "aliases": {
+                "Sanitizr": "Anomander\\Sanitizr\\Facades\\SanitizrFacade"
+            }
         }
     },
     "require-dev": {
