@@ -38,7 +38,7 @@ return [
 
     //Group the filters into rules that can be applied to the data
     'rules' => [
-        'default' => [ 'trim', 'escape_html', 'strip_tags' ],
+        'default' => [ 'trim' ],
         'api' => [ 'trim', 'escape_html', 'strip_tags' ],
         'form' => [ 'trim', 'strip_tags'],
         'database' => [ 'trim', 'add_slashes' ],

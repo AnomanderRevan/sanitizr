@@ -2,24 +2,24 @@
 
 namespace Anomander\Sanitizr\Http\Middleware;
 
-use Anomander\Sanitizr\Services\Sanitizer;
+use Anomander\Sanitizr\Services\SanitizrService;
 use Closure;
 use Illuminate\Http\Request;
 
 class AutoSan
 {
-    protected Sanitizer $sanitizer;
+    protected SanitizrService $sanitizr;
 
-    public function __construct(Sanitizer $sanitizer)
+    public function __construct(SanitizrService $sanitizr)
     {
-        $this->sanitizer = $sanitizer;
+        $this->sanitizr = $sanitizr;
     }
 
     public function handle(Request $request, Closure $next, $rulesString = '')
     {
         $rules = $this->parseRules($rulesString);
         $data = $request->all();
-        $sanitizedData = $this->sanitizer->sanitize($data, $rules);
+        $sanitizedData = $this->sanitizr->sanitize($data, $rules);
         $request->merge($sanitizedData);
 
         return $next($request);
