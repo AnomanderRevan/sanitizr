@@ -2,13 +2,13 @@
 
 namespace AnomanderRevan\Sanitizr\Providers;
 
-use Anomander\Sanitizr\Services\SanitizrService;
+use AnomanderRevan\Sanitizr\Services\SanitizrService;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
 
 class SanitizrServiceProvider extends ServiceProvider
 {
-    public function boot(Router $router)
+    public function boot(Router $router): void
     {
         // Publish config file
         $this->publishes([
@@ -21,11 +21,11 @@ class SanitizrServiceProvider extends ServiceProvider
         ], 'sanitizr-middleware');
 
         // Register middleware
-        $router->pushMiddlewareToGroup('web', \Anomander\Sanitizr\Http\Middleware\AutoSan::class);
-        $router->pushMiddlewareToGroup('api', \Anomander\Sanitizr\Http\Middleware\AutoSan::class);
+        $router->pushMiddlewareToGroup('web', \AnomanderRevan\Sanitizr\Http\Middleware\AutoSan::class);
+        $router->pushMiddlewareToGroup('api', \AnomanderRevan\Sanitizr\Http\Middleware\AutoSan::class);
     }
 
-    public function register()
+    public function register(): void
     {
         // Merge config file
         $this->mergeConfigFrom(__DIR__ . '/../../config/sanitizr.php', 'sanitizr');
