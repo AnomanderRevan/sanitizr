@@ -10,7 +10,7 @@ class SanitizrService
 
     public function __construct(array $filters = [])
     {
-        $this->filters = $filters;
+        $this->filters = $filters ?? config('sanitizr.filters');
     }
 
     public function sanitize(array $data, array $filters): array
