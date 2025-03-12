@@ -15,39 +15,26 @@ class AutoSan
         $this->sanitizr = $sanitizr;
     }
 
-    public function handle(Request $request, Closure $next, $rulesString = '')
+    public function handle(Request $request, Closure $next, array $rules = [])
     {
-        $rules = $this->parseRules($rulesString);
         $data = $request->all();
-        $sanitizedData = $this->sanitizr->sanitize($data, $rules);
+        $filters = $this->getFilters($rules);
+        $sanitizedData = $this->sanitizr->sanitize($data, $filters);
         $request->merge($sanitizedData);
 
         return $next($request);
     }
 
-    protected function parseRules($rulesString): array
-    {
-        $rules = [];
-        $fields = explode(';', $rulesString);
 
-        foreach ($fields as $field) {
-            list($fieldName, $fieldRules) = explode(',', $field);
-            $rules[$fieldName] = $this->getFilters($fieldRules);
-        }
-
-        return $rules;
-    }
-
-    protected function getFilters($fieldRules): array
+    protected function getFilters(array $rules): array
     {
         $filters = [];
-        $rules = explode('|', $fieldRules);
 
-        foreach ($rules as $rule) {
-            if (config("sanitizr.rules.$rule")) {
-                $filters = array_merge($filters, config("sanitizr.rules.$rule"));
-            } else {
-                $filters[] = $rule;
+        if (!empty($rules)) {
+            foreach ($rules as $rule) {
+                if (config("sanitizr.rules.$rule")) {
+                    $filters = array_merge($filters, config("sanitizr.rules.$rule"));
+                }
             }
         }
 
