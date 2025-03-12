@@ -1,6 +1,6 @@
 <?php
 
-namespace Anomander\Sanitizr\Http\Middleware;
+namespace AnomanderRevan\Sanitizr\Http\Middleware;
 
 use Anomander\Sanitizr\Services\SanitizrService;
 use Closure;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Anomander\Sanitizr\Services;
+namespace AnomanderRevan\Sanitizr\Services;
 
 class SanitizrService
 {

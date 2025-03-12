@@ -1,6 +1,6 @@
 <?php
 
-namespace Anomander\Sanitizr\Facades;
+namespace AnomanderRevan\Sanitizr\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

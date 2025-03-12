@@ -1,6 +1,6 @@
 <?php
 
-namespace Anomander\Sanitizr\Providers;
+namespace AnomanderRevan\Sanitizr\Providers;
 
 use Anomander\Sanitizr\Services\SanitizrService;
 use Illuminate\Support\ServiceProvider;
