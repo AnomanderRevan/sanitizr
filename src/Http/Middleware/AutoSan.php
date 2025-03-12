@@ -5,6 +5,7 @@ namespace AnomanderRevan\Sanitizr\Http\Middleware;
 use AnomanderRevan\Sanitizr\Services\SanitizrService;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AutoSan
 {
@@ -15,10 +16,10 @@ class AutoSan
         $this->sanitizr = $sanitizr;
     }
 
-    public function handle(Request $request, Closure $next, array $rules = [])
+    public function handle(Request $request, Closure $next, string $rule = null)
     {
         $data = $request->all();
-        $filters = $this->getFilters($rules);
+        $filters = $this->getFilters($rule);
         $sanitizedData = $this->sanitizr->sanitize($data, $filters);
         $request->merge($sanitizedData);
 
@@ -26,15 +27,15 @@ class AutoSan
     }
 
 
-    protected function getFilters(array $rules): array
+    protected function getFilters(string $rule): array
     {
         $filters = [];
 
-        if (!empty($rules)) {
-            foreach ($rules as $rule) {
-                if (config("sanitizr.rules.$rule")) {
-                    $filters = array_merge($filters, config("sanitizr.rules.$rule"));
-                }
+        if ($rule) {
+            if (config("sanitizr.rules.$rule")) {
+                $filters = array_merge($filters, config("sanitizr.rules.$rule"));
+            } else {
+                Log::error("Rule '$rule' is not defined");
             }
         }
 
