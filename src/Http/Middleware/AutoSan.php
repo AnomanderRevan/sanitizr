@@ -2,7 +2,7 @@
 
 namespace AnomanderRevan\Sanitizr\Http\Middleware;
 
-use Anomander\Sanitizr\Services\SanitizrService;
+use AnomanderRevan\Sanitizr\Services\SanitizrService;
 use Closure;
 use Illuminate\Http\Request;
 
