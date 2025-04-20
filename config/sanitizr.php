@@ -1,6 +1,30 @@
 <?php
 
+/**
+ * This file contains the configuration for the Sanitizr package.
+ * The configuration file contains the filters that will be used to sanitize the data.
+ * The filters are grouped into rules that can be applied to the data.
+ */
+
+use Illuminate\Support\Facades\Log;
+
 return [
+
+    //Group the filters into rules that can be applied to the data
+    //Rules applied to entire $request
+    'rules' => [
+        'api' => ['trim', 'strip_tags', 'sql_check'],
+        'database' => [ 'trim', 'add_slashes' ],
+        'form' => [ 'xss_check', 'sql_check'],
+        'security' => [ 'cmd_check', 'xss_check', 'sql_check' ],
+    ],
+
+    //Rules applied to individual fields with matching name
+    'field_rules' => [
+        'first_name' => ['lowercase', 'ucfirst'],
+        'email' => [ 'remove_whitespace', 'sanitize_email' ],
+        'url' => [ 'sanitize_url' ],
+    ],
 
     //Define the filters that will be used to sanitize the data
     'filters' => [
@@ -34,15 +58,59 @@ return [
         'real_path' => function($value) { return realpath($value); },
         'base_name' => function($value) { return basename($value); },
         'add_slashes' => function($value) { return addslashes($value); },
-    ],
+        'crlf_clean' => function($value) { return str_replace(["\r", "\n"], '', $value); },
 
-    //Group the filters into rules that can be applied to the data
-    'rules' => [
-        'default' => [ 'trim' ],
-        'api' => [ 'trim', 'escape_html', 'strip_tags' ],
-        'form' => [ 'trim', 'strip_tags'],
-        'database' => [ 'trim', 'add_slashes' ],
-    ]
+        //Command injection detection
+        'cmd_check' => function ($value) {
+            if (preg_match('/(;|\||&&|`|<\?|base64|cmd|exec|system|-rm|%3B)/i', $value)) {
+                // Sanitize the value before logging
+                $sanitizedValue = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+
+                // Log the incident with sanitized value
+                Log::warning('Sanitizr: Possible Security Threat Detected (Command Injection)', ['value' => $sanitizedValue]);
+
+                return false;
+            }
+
+            return true;
+        },
+
+        // XSS detection
+        'xss_check' => function($value) {
+            if (str_contains(strtolower($value), '<script>')) {
+                // Sanitize the value before logging
+                $sanitizedValue = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+
+                // Log the incident with sanitized value
+                Log::warning('Sanitizr: Possible Security Threat Detected (XSS)', ['value' => $sanitizedValue]);
+
+                // Return a safe response
+                return 'Submission Quarantined.';
+            } else {
+                return $value;
+            }
+        },
+
+        // SQL Injection detection
+        'sql_check' => function($value) {
+            // Define a regex pattern to detect SQL keywords in malicious contexts
+            $pattern = '/(?:^|;)\s*(drop\s+table|truncate\s+table|delete\s+from|insert\s+into|select\s+.*?from|update\s+\w+\s+set|union\s+select|alter\s+table|create\s+table|exec\s+\w+)/i';
+
+            // Check if the value triggers the regex pattern
+            if (preg_match($pattern, $value)) {
+                // Sanitize the value before logging
+                $sanitizedValue = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+
+                // Log the incident with sanitized value
+                Log::warning('Sanitizr: Possible Security Threat Detected (SQL Injection)', ['value' => $sanitizedValue]);
+
+                // Return a safe response
+                return 'Submission Quarantined.';
+            } else {
+                return $value;
+            }
+        },
+    ],
 
 
 ];

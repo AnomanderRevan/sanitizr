@@ -32,7 +32,7 @@ class SanitizrServiceProvider extends ServiceProvider
 
         // Register the SanitizrService
         $this->app->singleton('sanitizr', function ($app) {
-            return new SanitizrService(config('sanitizr.filters'));
+            return new SanitizrService();
         });
 
         // Register the facade

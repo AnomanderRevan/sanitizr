@@ -6,21 +6,27 @@ use Illuminate\Support\Facades\Log;
 
 class SanitizrService
 {
-    protected array $filters;
+    protected array $configFilters;
 
-    public function __construct(array $filters = [])
+    public function __construct()
     {
-        $this->filters = $filters ?? config('sanitizr.filters');
+        $this->configFilters = config('sanitizr.filters') ?? [];
     }
 
+    /**
+     * Sanitize data using filter functions from config
+     * @param array $data
+     * @param array $filters
+     * @return array
+     */
     public function sanitize(array $data, array $filters): array
     {
         if (!empty($filters) && !empty($data)) {
             foreach ($filters as $filter) {
-                if (isset($this->filters[$filter])) {
-                    if (is_callable($this->filters[$filter])) {
+                if (isset($this->configFilters[$filter])) {
+                    if (is_callable($this->configFilters[$filter])) {
                         foreach ($data as $key => $value) {
-                            $data[$key] = call_user_func($this->filters[$filter], $value);
+                            $data[$key] = call_user_func($this->configFilters[$filter], $value);
                         }
                     } else {
                         Log::error("Filter '$filter' is not callable");
@@ -33,4 +39,6 @@ class SanitizrService
 
         return $data;
     }
+
+
 }
