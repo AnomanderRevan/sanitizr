@@ -21,20 +21,20 @@ class SqlCheckTest extends TestCase
 
     public function test_it_allows_clean_input(): void
     {
-        $input = ['message' => 'Hello world'];
+        $input = 'Hello world';
         $filters = ['sql_check'];
 
-        $output = $this->sanitizr->sanitize($input, $filters);
+        $output = $this->sanitizr->sanitizeValue($input, $filters);
 
         $this->assertSame($input, $output);
     }
 
     public function test_it_allows_sql_keywords_in_legitimate_contexts()
     {
-        $input = ['query' => "This is a dropdown select option."];
+        $input = "This is a dropdown select option.";
         $filters = ['sql_check'];
 
-        $output = $this->sanitizr->sanitize($input, $filters);
+        $output = $this->sanitizr->sanitizeValue($input, $filters);
 
         $this->assertSame($input, $output);
     }
@@ -43,59 +43,59 @@ class SqlCheckTest extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $input = ['query' => "DROP TABLE users;"];
+        $input = "DROP TABLE users;";
         $filters = ['sql_check'];
 
-        $this->sanitizr->sanitize($input, $filters);
+        $this->sanitizr->sanitizeValue($input, $filters);
     }
 
     public function test_it_blocks_chained_sql_queries()
     {
         $this->expectException(Exception::class);
 
-        $input = ['username' => "admin'; DROP TABLE users; --"];
+        $input = "admin'; DROP TABLE users; --";
         $filters = ['sql_check'];
 
-        $this->sanitizr->sanitize($input, $filters);
+        $this->sanitizr->sanitizeValue($input, $filters);
     }
 
     public function test_it_blocks_html_encoded_sql_injection()
     {
         $this->expectException(Exception::class);
 
-        $input = ['query' => "&lt;script&gt;DROP TABLE users&lt;/script&gt;;"];
+        $input = "&lt;script&gt;DROP TABLE users&lt;/script&gt;;";
         $filters = ['sql_check'];
 
-        $this->sanitizr->sanitize($input, $filters);
+        $this->sanitizr->sanitizeValue($input, $filters);
     }
 
     public function test_it_blocks_url_encoded_sql_injection()
     {
         $this->expectException(Exception::class);
 
-        $input = ['query' => "SELECT%20*%20FROM%20users%20WHERE%201=1"];
+        $input = "SELECT%20*%20FROM%20users%20WHERE%201=1";
         $filters = ['sql_check'];
 
-        $this->sanitizr->sanitize($input, $filters);
+        $this->sanitizr->sanitizeValue($input, $filters);
     }
 
     public function test_it_blocks_union_select_attacks()
     {
         $this->expectException(Exception::class);
 
-        $input = ['query' => "UNION SELECT username, password FROM users"];
+        $input = "UNION SELECT username, password FROM users";
         $filters = ['sql_check'];
 
-        $this->sanitizr->sanitize($input, $filters);
+        $this->sanitizr->sanitizeValue($input, $filters);
     }
 
     public function test_it_blocks_obfuscated_keywords()
     {
         $this->expectException(Exception::class);
 
-        $input = ['query' => "D%52OP TABLE users"]; // R is %52
+        $input = "D%52OP TABLE users"; // R is %52
         $filters = ['sql_check'];
 
-        $this->sanitizr->sanitize($input, $filters);
+        $this->sanitizr->sanitizeValue($input, $filters);
     }
 }

@@ -21,34 +21,27 @@ class SanitizrServiceTest extends TestCase
 
     public function test_it_applies_trim_and_strip_tags_filters()
     {
-        $input = [
-            'name' => '  <b>Bob</b> ',
-        ];
+        $input = '  <b>Bob</b> ';
 
         $filters = ['trim', 'strip_tags'];
 
-        $expected = [
-            'name' => 'Bob',
-        ];
+        $expected = 'Bob';
 
-        $output = $this->sanitizr->sanitize($input, $filters);
+        $output = $this->sanitizr->sanitizeValue($input, $filters);
 
         $this->assertEquals($expected, $output);
     }
 
     public function test_it_skips_non_callable_filters_and_logs()
     {
-        Config::set('sanitize.filters.invalid', 'not_a_function');
-
-        // Laravel's Log::spy() could be used here, or just a smoke test
-        $output = $this->sanitizr->sanitize(['field' => ' test '], ['invalid']);
+        $output = $this->sanitizr->sanitize(['field' => ' test '], 'invalid_rule');
 
         $this->assertEquals(['field' => ' test '], $output);
     }
 
     public function test_it_handles_no_data_gracefully()
     {
-        $output = $this->sanitizr->sanitize([], ['trim', 'strip_tags']);
+        $output = $this->sanitizr->sanitize([], 'api');
 
         $this->assertSame([], $output);
     }

@@ -13,9 +13,19 @@ return [
 
     //Rules applied to entire $request
     'rules' => [
-        'api' => ['trim', 'strip_tags'],
-        'form' => [ 'trim', 'strip_tags', 'escape_html' ],
-        'security' => [ 'cmd_check', 'xss_check', 'sql_check' ],
+        'global' => [
+            'api' => ['trim', 'strip_tags'],
+            'form' => [ 'trim', 'strip_tags', 'escape_html' ],
+            'security' => [ 'cmd_check', 'xss_check', 'sql_check' ]
+        ],
+        'field' => [
+            'first_name' => ['trim', 'lowercase', 'ucfirst'],
+            'last_name' => ['trim', 'lowercase', 'ucfirst'],
+            'email' => ['trim', 'lowercase', 'sanitize_email'],
+            'username' => ['trim', 'lowercase', 'alpha_num'],
+            'eircode' => ['trim', 'uppercase', 'remove_special_chars'],
+            'phone' => ['trim', 'remove_special_chars', 'numeric'],
+        ],
     ],
 
     //Define the filters that will be used to sanitize the data
@@ -78,7 +88,7 @@ return [
             if (preg_match($pattern, $normalisedValue)) {
                 $sanitizedValue = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
                 Log::warning('SANITIZR: Possible Security Threat Detected (Command Injection)', ['value' => $sanitizedValue]);
-                throw new Exception('Submission Quarantined.', 400);
+                throw new Exception('Submission Quarantined. Contact Support.', 400);
             }
 
             return $value;
@@ -120,7 +130,7 @@ return [
                 if (preg_match($pattern, $normalisedValue)) {
                     $sanitized = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
                     Log::warning('SANITIZR: Possible Security Threat Detected (XSS)', ['value' => $sanitized]);
-                    throw new \Exception('Submission Quarantined.', 400);
+                    throw new \Exception('Submission Quarantined. Contact Support.', 400);
                 }
             }
 
@@ -153,7 +163,7 @@ return [
                 // Log the incident with sanitized value
                 Log::warning('SANITIZR: Possible Security Threat Detected (SQL Injection)', ['value' => $sanitizedValue]);
 
-                throw new Exception('Submission Quarantined.', 400);
+                throw new Exception('Submission Quarantined. Contact Support.', 400);
             } else {
                 return $value;
             }
