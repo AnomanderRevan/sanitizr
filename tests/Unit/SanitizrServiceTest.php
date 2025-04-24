@@ -46,18 +46,18 @@ class SanitizrServiceTest extends TestCase
         $this->assertSame([], $output);
     }
 
-    public function test_it_can_run_security_checks()
+    public function test_it_can_run_security_checks_on_url()
     {
-        Config::set('sanitize.run_security_checks', true);
+        Config::set('sanitize.run_cmd_check_on_url', true);
 
-        $this->assertTrue($this->sanitizr->canRunSecurityChecks());
+        $this->assertTrue($this->sanitizr->urlCmdCheckEnabled());
     }
 
-    public function test_it_does_not_run_security_checks()
+    public function test_it_does_not_run_security_checks_on_url()
     {
-        Config::set('sanitize.run_security_checks', false);
+        Config::set('sanitize.run_cmd_check_on_url', false);
 
-        $this->assertFalse($this->sanitizr->canRunSecurityChecks());
+        $this->assertFalse($this->sanitizr->urlCmdCheckEnabled());
     }
 
 

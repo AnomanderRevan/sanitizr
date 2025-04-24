@@ -9,7 +9,7 @@
 use Illuminate\Support\Facades\Log;
 
 return [
-    'run_security_checks' => true,
+    'run_cmd_check_on_url' => true,
 
     //Rules applied to entire $request
     'rules' => [
