@@ -13,9 +13,9 @@ class SanitizrService
 
     public function __construct()
     {
-        $this->filters = Config::get('sanitize.filters', []);
-        $this->fieldRules = Config::get('sanitize.rules.field', []);
-        $this->globalRules = Config::get('sanitize.rules.global', []);
+        $this->filters = Config::get('sanitizr.filters', []);
+        $this->fieldRules = Config::get('sanitizr.rules.field', []);
+        $this->globalRules = Config::get('sanitizr.rules.global', []);
     }
 
     /**
