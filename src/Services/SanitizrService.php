@@ -3,6 +3,7 @@
 namespace AnomanderRevan\Sanitizr\Services;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Config;
 
 class SanitizrService
 {
@@ -10,7 +11,7 @@ class SanitizrService
 
     public function __construct()
     {
-        $this->configFilters = config('sanitizr.filters') ?? [];
+        $this->configFilters = Config::get('sanitize.filters', []);
     }
 
     /**
@@ -40,5 +41,13 @@ class SanitizrService
         return $data;
     }
 
+    /**
+     * Check if security checks should be run
+     * @return bool
+     */
+    public function canRunSecurityChecks(): bool
+    {
+        return Config::get('sanitize.run_security_checks', false);
+    }
 
 }

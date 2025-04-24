@@ -9,21 +9,13 @@
 use Illuminate\Support\Facades\Log;
 
 return [
+    'run_security_checks' => true,
 
-    //Group the filters into rules that can be applied to the data
     //Rules applied to entire $request
     'rules' => [
-        'api' => ['trim', 'strip_tags', 'sql_check'],
-        'database' => [ 'trim', 'add_slashes' ],
-        'form' => [ 'xss_check', 'sql_check'],
+        'api' => ['trim', 'strip_tags'],
+        'form' => [ 'trim', 'strip_tags', 'escape_html' ],
         'security' => [ 'cmd_check', 'xss_check', 'sql_check' ],
-    ],
-
-    //Rules applied to individual fields with matching name
-    'field_rules' => [
-        'first_name' => ['lowercase', 'ucfirst'],
-        'email' => [ 'remove_whitespace', 'sanitize_email' ],
-        'url' => [ 'sanitize_url' ],
     ],
 
     //Define the filters that will be used to sanitize the data
@@ -62,50 +54,106 @@ return [
 
         //Command injection detection
         'cmd_check' => function ($value) {
-            if (preg_match('/(;|\||&&|`|<\?|base64|cmd|exec|system|-rm|%3B)/i', $value)) {
-                // Sanitize the value before logging
-                $sanitizedValue = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+            $previous = null;
+            $maxIterations = 5;
+            $i = 0;
+            $normalisedValue = $value;
 
-                // Log the incident with sanitized value
-                Log::warning('Sanitizr: Possible Security Threat Detected (Command Injection)', ['value' => $sanitizedValue]);
-
-                return false;
+            while ($normalisedValue !== $previous && $i++ < $maxIterations) {
+                $previous = $normalisedValue;
+                $normalisedValue = urldecode($normalisedValue);
+                $normalisedValue = html_entity_decode($normalisedValue, ENT_QUOTES | ENT_HTML5, 'UTF-8');
             }
 
-            return true;
+            $normalisedValue = preg_replace('/\s+/', '', strtolower(trim($normalisedValue)));
+
+            // Unescape escaped shell characters
+            $normalisedValue = preg_replace('/\\\\([;&|`])/', '$1', $normalisedValue);
+
+            // Command injection pattern
+            $pattern = '/(;|\||&&|-rf|-l|`|<\?|'
+                . '\b(cmd|exec|system|sh|bash|zsh|powershell|base64|wget|curl|scp|ftp|python|perl|ruby)\b'
+                . '(?!\s*(\=|\&|\||;|`|\s*\/|\s*\-|\s*\;)))/i';
+
+            if (preg_match($pattern, $normalisedValue)) {
+                $sanitizedValue = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                Log::warning('SANITIZR: Possible Security Threat Detected (Command Injection)', ['value' => $sanitizedValue]);
+                throw new Exception('Submission Quarantined.', 400);
+            }
+
+            return $value;
         },
 
         // XSS detection
         'xss_check' => function($value) {
-            if (str_contains(strtolower($value), '<script>')) {
-                // Sanitize the value before logging
-                $sanitizedValue = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+            $previous = null;
+            $maxIterations = 5;
+            $i = 0;
+            $normalisedValue = $value;
 
-                // Log the incident with sanitized value
-                Log::warning('Sanitizr: Possible Security Threat Detected (XSS)', ['value' => $sanitizedValue]);
-
-                // Return a safe response
-                return 'Submission Quarantined.';
-            } else {
-                return $value;
+            while ($normalisedValue !== $previous && $i++ < $maxIterations) {
+                $previous = $normalisedValue;
+                $normalisedValue = urldecode($normalisedValue);
+                $normalisedValue = html_entity_decode($normalisedValue, ENT_QUOTES | ENT_HTML5, 'UTF-8');
             }
+
+            $normalisedValue = preg_replace('/\s+/', '', strtolower(trim($normalisedValue)));
+
+            $patterns = [
+                // Script tags (obfuscated, encoded, or broken up)
+                '/<\s*script.*?>.*?<\s*\/\s*script\s*>/is',
+                '/&#x[0-9a-f]+;/i',  // HTML encoded characters
+                '/<\s*\/?\s*script\s*>/i',
+
+                // Event handlers and javascript: URLs
+                '/on\w+\s*=\s*["\']?[^"\']*["\']?/i',   // e.g., onclick, onerror
+                '/javascript\s*:/i',
+                '/data\s*:[^;]*;base64,/i',
+
+                // Suspicious tags
+                '/<\s*(iframe|svg|math|embed|object|meta|link|base)[^>]*>/i',
+
+                // CSS expression (old IE XSS vector)
+                '/expression\s*\(/i',
+            ];
+            foreach ($patterns as $pattern) {
+                if (preg_match($pattern, $normalisedValue)) {
+                    $sanitized = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                    Log::warning('SANITIZR: Possible Security Threat Detected (XSS)', ['value' => $sanitized]);
+                    throw new \Exception('Submission Quarantined.', 400);
+                }
+            }
+
+            return $value;
         },
 
         // SQL Injection detection
         'sql_check' => function($value) {
+            $previous = null;
+            $maxIterations = 5;
+            $i = 0;
+            $normalisedValue = $value;
+
+            while ($normalisedValue !== $previous && $i++ < $maxIterations) {
+                $previous = $normalisedValue;
+                $normalisedValue = urldecode($normalisedValue);
+                $normalisedValue = html_entity_decode($normalisedValue, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            }
+
+            $normalisedValue = preg_replace('/\s+/', ' ', strtolower(trim($normalisedValue)));
+
             // Define a regex pattern to detect SQL keywords in malicious contexts
-            $pattern = '/(?:^|;)\s*(drop\s+table|truncate\s+table|delete\s+from|insert\s+into|select\s+.*?from|update\s+\w+\s+set|union\s+select|alter\s+table|create\s+table|exec\s+\w+)/i';
+            $pattern = '/\b(drop\s+table|truncate\s+table|delete\s+from|insert\s+into|select\s+[^;]*from|update\s+\w+\s+set|union\s+select|alter\s+table|create\s+table|exec\s+\w+)\b/i';
 
             // Check if the value triggers the regex pattern
-            if (preg_match($pattern, $value)) {
+            if (preg_match($pattern, $normalisedValue)) {
                 // Sanitize the value before logging
                 $sanitizedValue = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 
                 // Log the incident with sanitized value
-                Log::warning('Sanitizr: Possible Security Threat Detected (SQL Injection)', ['value' => $sanitizedValue]);
+                Log::warning('SANITIZR: Possible Security Threat Detected (SQL Injection)', ['value' => $sanitizedValue]);
 
-                // Return a safe response
-                return 'Submission Quarantined.';
+                throw new Exception('Submission Quarantined.', 400);
             } else {
                 return $value;
             }

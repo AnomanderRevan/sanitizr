@@ -1,50 +1,50 @@
 {
-    "name": "anomanderrevan/sanitizr",
-    "description": "A centralized, customizable input & security sanitization package for laravel",
-    "authors": [
-        {
-            "role": "Developer",
-            "name": "Kieran White",
-            "email": "kieranwhite84@gmail.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "AnomanderRevan\\Sanitizr\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "AnomanderRevan\\Sanitizr\\Tests\\": "tests/"
-        }
-    },
-    "require": {
-        "php": "^8.0",
-        "illuminate/support": "^11.0|^12.0"
-
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "config": {
-        "sort-packages": true,
-        "preferred-install": "dist",
-        "optimize-autoloader": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "AnomanderRevan\\Sanitizr\\Providers\\SanitizrServiceProvider"
-            ],
-            "aliases": {
-                "Sanitizr": "AnomanderRevan\\Sanitizr\\Facades\\SanitizrFacade"
-            }
-        }
-    },
-    "require-dev": {
-        "orchestra/testbench": "^9.11",
-        "pestphp/pest": "^3.7"
+  "name": "anomanderrevan/sanitizr",
+  "description": "A centralized, customizable input & security sanitization package for laravel",
+  "authors": [
+    {
+      "role": "Developer",
+      "name": "Kieran White",
+      "email": "kieranwhite84@gmail.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "AnomanderRevan\\Sanitizr\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "AnomanderRevan\\Sanitizr\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "php": "^8.0",
+    "illuminate/support": "^11.0|^12.0"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true,
+    "preferred-install": "dist",
+    "optimize-autoloader": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "AnomanderRevan\\Sanitizr\\Providers\\SanitizrServiceProvider"
+      ],
+      "aliases": {
+        "Sanitizr": "AnomanderRevan\\Sanitizr\\Facades\\SanitizrFacade"
+      }
+    }
+  },
+  "require-dev": {
+    "orchestra/testbench": "^9.11",
+    "pestphp/pest": "^3.7",
+    "phpunit/phpunit": "^11.5"
+  }
 }
