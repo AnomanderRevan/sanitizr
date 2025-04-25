@@ -42,6 +42,16 @@ class CmdCheckTest extends TestCase
         $this->assertSame($input, $output);
     }
 
+    public function test_it_blocks_malicious_url()
+    {
+        $this->expectException(Exception::class);
+
+        $input = 'http://example.com/search?query=someinput&extra=' . urlencode('&&dir');
+        $filters = ['cmd_check'];
+
+        $this->sanitizr->sanitizeValue($input, $filters);
+    }
+
     public function test_it_blocks_basic_shell_command()
     {
         $this->expectException(Exception::class);
