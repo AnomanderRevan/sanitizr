@@ -32,7 +32,7 @@ class AutoSanMiddlewareTest extends TestCase
         $response->assertBadRequest()->assertJson(['error' => 'Submission Quarantined. Contact Support.']);
 
     }
-    /*
+
     public function test_it_passes_through_clean_url_and_data()
     {
         $request = [ 'name' => 'Jane'];
@@ -101,5 +101,5 @@ class AutoSanMiddlewareTest extends TestCase
         $this->assertEquals(400, $response->status());
         $this->assertEquals(['error' => 'Test Exception'], $response->getOriginalContent());
     }
-    */
+    
 }
