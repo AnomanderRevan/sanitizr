@@ -27,7 +27,6 @@ class SanitizrService
     public function sanitize(array $data, string $rule = null): array
     {
         $globalFilters = $rule && isset($this->globalRules[$rule]) ? $this->globalRules[$rule] : [];
-
         foreach ($data as $field => $value) {
             // Merge global filters with field-specific ones
             $filters = $globalFilters;

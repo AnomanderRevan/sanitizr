@@ -16,7 +16,7 @@ return [
         'global' => [
             'api' => ['trim', 'strip_tags'],
             'form' => [ 'trim', 'strip_tags', 'escape_html' ],
-            'security' => [ 'cmd_check', 'xss_check', 'sql_check' ]
+            'security' => [ 'xss_check', 'sql_check' ]
         ],
         'field' => [
             'first_name' => ['trim', 'lowercase', 'ucfirst'],
@@ -24,7 +24,8 @@ return [
             'email' => ['trim', 'lowercase', 'sanitize_email'],
             'username' => ['trim', 'lowercase', 'alpha_num'],
             'eircode' => ['trim', 'uppercase', 'remove_special_chars'],
-            'phone' => ['trim', 'remove_special_chars', 'numeric'],
+            'phone' => ['trim', 'phone_plus_replace', 'remove_special_chars', 'numeric'],
+            'mobile' => ['trim', 'phone_plus_replace', 'remove_special_chars', 'numeric'],
         ],
     ],
 
@@ -61,6 +62,7 @@ return [
         'base_name' => function($value) { return basename($value); },
         'add_slashes' => function($value) { return addslashes($value); },
         'crlf_clean' => function($value) { return str_replace(["\r", "\n"], '', $value); },
+        'phone_plus_replace' => function($value) { return preg_replace('/\+/', '00', $value); },
 
         //Command injection detection
         'cmd_check' => function ($value) {
@@ -90,7 +92,6 @@ return [
                 Log::warning('SANITIZR: Possible Security Threat Detected (Command Injection)', ['value' => $sanitizedValue]);
                 throw new Exception('Submission Quarantined. Contact Support.', 400);
             }
-
             return $value;
         },
 
