@@ -11,18 +11,25 @@ use Illuminate\Support\Facades\Log;
 return [
     'run_cmd_check_on_url' => true,
 
+    //Define the fields that will be excluded from sanitization
+    'excluded_fields' => [
+        'csrf_token',
+        'username',
+        'password',
+        'password_confirmation',
+    ],
+
     //Rules applied to entire $request
     'rules' => [
         'global' => [
-            'api' => ['trim', 'strip_tags'],
-            'form' => [ 'trim', 'strip_tags', 'escape_html' ],
-            'security' => [ 'xss_check', 'sql_check' ]
+            'api' => ['escape_html'],
+            'form' => [ 'strip_tags'],
+            'security' => [ 'xss_check', 'sql_check' ],
         ],
         'field' => [
             'first_name' => ['trim', 'lowercase', 'ucfirst'],
             'last_name' => ['trim', 'lowercase', 'ucfirst'],
             'email' => ['trim', 'lowercase', 'sanitize_email'],
-            'username' => ['trim', 'lowercase', 'alpha_num'],
             'eircode' => ['trim', 'uppercase', 'remove_special_chars'],
             'phone' => ['trim', 'phone_plus_replace', 'remove_special_chars', 'numeric'],
             'mobile' => ['trim', 'phone_plus_replace', 'remove_special_chars', 'numeric'],

@@ -25,6 +25,25 @@ class AutoSanMiddlewareTest extends TestCase
         })->middleware(AutoSan::class . ':security');
     }
 
+    public function test_it_sanitizes_nested_input()
+    {
+        $request = [
+            'user' => [
+                'name' => '  john  ',
+                'email' => '  JOHN@EMAIL.COM ',
+            ]
+        ];
+
+        $response = $this->postJson('/test-form', $request);
+
+        $response->assertOk()->assertJson(['sanitized' => [
+                'user' => [
+                    'name' => 'john',
+                    'email' => 'john@email.com',
+                ],
+            ]]);
+    }
+
     public function test_it_blocks_sql_injection()
     {
         $request = [ 'search' => '1; DROP TABLE users; --' ];
@@ -37,7 +56,7 @@ class AutoSanMiddlewareTest extends TestCase
     {
         $request = [ 'name' => 'Jane'];
         $response = $this->postJson('/test-api?query=help', $request);
-        $response->assertOk()->assertJson(['message' => 'OK']);
+        $response->assertOk()->assertJson(['name' => 'Jane', 'query' => 'help']);
     }
 
     public function test_it_sanitizes_request_data()
@@ -101,5 +120,24 @@ class AutoSanMiddlewareTest extends TestCase
         $this->assertEquals(400, $response->status());
         $this->assertEquals(['error' => 'Test Exception'], $response->getOriginalContent());
     }
-    
+
+    public function test_it_excludes_fields_from_sanitization()
+    {
+        $request = [
+            'first_name' => 'john',
+            'last_name' => 'doe',
+            'username' => 'jOhN.dOe', // Excluded field
+            'password' => 'sEcReT123!', // Excluded field
+        ];
+
+        $response = $this->postJson('/test-form', $request);
+
+        $response->assertOk()->assertJson(['sanitized' => [
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'username' => 'jOhN.dOe', // Remains untouched
+            'password' => 'sEcReT123!', // Remains untouched
+        ]]);
+    }
+
 }
