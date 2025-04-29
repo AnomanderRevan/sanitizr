@@ -177,7 +177,8 @@ When a potential security threat is detected, Sanitizr logs the incident using L
 
 ## Testing
 
-To test the sanitization functionality, you can write unit tests for your application. For example:
+The package comes with a set of unit tests to ensure the sanitization functionality works as expected.
+To test the sanitization functionality locally, you can write unit tests for your application. For example:
 
 ```php
 public function testSanitization()
@@ -193,7 +194,10 @@ public function testSanitization()
     $this->assertEquals('example@example.com', $sanitized['email']);
 }
 ```
-
+You can run the tests using PHPUnit:
+```bash
+php artisan test
+```
 ---
 
 ## Support
