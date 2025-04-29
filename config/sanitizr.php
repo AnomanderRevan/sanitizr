@@ -19,13 +19,15 @@ return [
         'password_confirmation',
     ],
 
-    //Rules applied to entire $request
+    //Define the rules that will be used to sanitize the data
     'rules' => [
+        //Rules applied to entire $request
         'global' => [
             'api' => ['escape_html'],
             'form' => [ 'strip_tags'],
             'security' => [ 'xss_check', 'sql_check' ],
         ],
+        //Rules applied to specific fields
         'field' => [
             'first_name' => ['trim', 'lowercase', 'ucfirst'],
             'last_name' => ['trim', 'lowercase', 'ucfirst'],
