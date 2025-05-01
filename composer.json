@@ -1,6 +1,8 @@
 {
   "name": "anomanderrevan/sanitizr",
   "description": "A centralized, customizable input & security sanitization package for laravel",
+  "type": "library",
+  "license": "MIT",
   "authors": [
     {
       "role": "Developer",

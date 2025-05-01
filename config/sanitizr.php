@@ -29,16 +29,16 @@ return [
         ],
         //Rules applied to specific fields
         'field' => [
-            'first_name' => ['trim', 'lowercase', 'ucfirst'],
-            'last_name' => ['trim', 'lowercase', 'ucfirst'],
-            'email' => ['trim', 'lowercase', 'sanitize_email'],
-            'eircode' => ['trim', 'uppercase', 'remove_special_chars'],
-            'phone' => ['trim', 'phone_plus_replace', 'remove_special_chars', 'numeric'],
-            'mobile' => ['trim', 'phone_plus_replace', 'remove_special_chars', 'numeric'],
+            'first_name' => ['lowercase', 'ucfirst'],
+            'last_name' => ['lowercase', 'ucfirst'],
+            'email' => ['lowercase', 'sanitize_email'],
+            'eircode' => ['uppercase', 'remove_special_chars'],
+            'phone' => ['phone_plus_replace', 'remove_special_chars', 'numeric'],
+            'mobile' => ['phone_plus_replace', 'remove_special_chars', 'numeric'],
         ],
     ],
 
-    //Define the filters that will be used to sanitize the data
+    //Define the filters that will be used to sanitize request data
     'filters' => [
         'trim' => function ($value) { return trim($value); },
         'escape_html' => function($value) { return htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); },
