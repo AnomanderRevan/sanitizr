@@ -1,5 +1,5 @@
 # Sanitizr
-A Laravel Input & Security Sanitization Package
+A Laravel Security & Input Sanitization Package
 
 Sanitizr is a Laravel package designed to sanitize user input, ensuring your application is protected against common security threats like SQL injection, XSS, and command injection.
 
