@@ -9,7 +9,7 @@
 use Illuminate\Support\Facades\Log;
 
 return [
-    'run_cmd_check_on_url' => true,
+    'run_check_on_url' => true,
 
     //Define the fields that will be excluded from sanitization
     'excluded_fields' => [

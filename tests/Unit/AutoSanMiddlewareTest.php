@@ -108,8 +108,8 @@ class AutoSanMiddlewareTest extends TestCase
         Log::shouldReceive('error')->once();
 
         $mock = \Mockery::mock(SanitizrService::class);
-        $mock->shouldReceive('urlCmdCheckEnabled')->andReturn(true);
-        $mock->shouldReceive('sanitizeValue')->andThrow(new Exception('Test Exception'));
+        $mock->shouldReceive('urlCheckEnabled')->andReturn(true);
+        $mock->shouldReceive('sanitize')->andThrow(new Exception('Test Exception'));
 
         $middleware = new AutoSan($mock);
 

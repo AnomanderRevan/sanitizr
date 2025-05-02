@@ -27,9 +27,9 @@ class AutoSan
     public function handle(Request $request, Closure $next, string $rule = null): mixed
     {
         try {
-            if ($this->sanitizr->urlCmdCheckEnabled()) {
+            if ($this->sanitizr->urlCheckEnabled()) {
                 $fullUrl = $request->fullUrl();
-                $this->sanitizr->sanitizeValue($fullUrl, ['cmd_check']);
+                $this->sanitizr->sanitize(['url' => $fullUrl], 'security');
             }
             $data = $request->all();
             $sanitizedData = $this->sanitizr->sanitize($data, $rule);

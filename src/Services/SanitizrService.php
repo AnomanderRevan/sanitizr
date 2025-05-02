@@ -98,9 +98,9 @@ class SanitizrService
      * Check if security checks should be run on url
      * @return bool
      */
-    public function urlCmdCheckEnabled(): bool
+    public function urlCheckEnabled(): bool
     {
-        return Config::get('sanitize.run_cmd_check_on_url', false);
+        return Config::get('sanitize.run_check_on_url', false);
     }
 
 }
