@@ -163,9 +163,9 @@ Sanitizr includes built-in filters which can be applied to detect and mitigate c
 
 When a potential security threat is detected, the middleware will log the incident and return a 400 response before the request is processed by the application.
 
-When using the `cmd_check` filter, you can also specify whether to automatically check for command injection on URLs by enabling the `run_cmd_check_on_url` in the config. This is useful for APIs that may be vulnerable to command injection attacks. You can enable this feature in the configuration file:
+You can also specify whether to automatically check for injection on URLs by enabling the `run_check_on_url` in the config. You can enable this feature in the configuration file:
 ```php
-    'run_cmd_check_on_url' => true,
+    'run_check_on_url' => true,
 ```
 ---
 
