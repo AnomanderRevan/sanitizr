@@ -100,7 +100,7 @@ class SanitizrService
      */
     public function urlCheckEnabled(): bool
     {
-        return Config::get('sanitize.run_check_on_url', false);
+        return Config::get('sanitizr.run_check_on_url', false);
     }
 
 }

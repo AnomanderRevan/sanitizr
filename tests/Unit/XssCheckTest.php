@@ -19,9 +19,9 @@ class XssCheckTest extends TestCase
         $this->sanitizr = new SanitizrService();
     }
 
-    public function test_it_allows_non_malicious_use_of_script_word(): void
+    public function test_it_allows_non_malicious_use_of_key_words(): void
     {
-        $input = 'I have forwarded the script to the director';
+        $input = 'I have written an online script that does not contain any malicious code. It uses javascript and base64 encoding, but it is not harmful.';
         $filters = ['xss_check'];
 
         $output = $this->sanitizr->sanitizeValue($input, $filters);

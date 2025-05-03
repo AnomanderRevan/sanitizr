@@ -25,7 +25,7 @@ return [
         'global' => [
             'api' => ['escape_html'],
             'form' => [ 'strip_tags'],
-            'security' => [ 'xss_check', 'sql_check' ],
+            'security' => [ 'xss_check', 'sql_check', 'cmd_check' ],
         ],
         //Rules applied to specific fields
         'field' => [
@@ -71,7 +71,7 @@ return [
         'base_name' => function($value) { return basename($value); },
         'add_slashes' => function($value) { return addslashes($value); },
         'crlf_clean' => function($value) { return str_replace(["\r", "\n"], '', $value); },
-        'phone_plus_replace' => function($value) { return preg_replace('/\+/', '00', $value); },
+        'phone_plus_replace' => function($value) { return preg_replace('/^\+/', '00', $value); },
 
         //Command injection detection
         'cmd_check' => function ($value) {
@@ -122,18 +122,18 @@ return [
             $patterns = [
                 // Script tags (obfuscated, encoded, or broken up)
                 '/<\s*script.*?>.*?<\s*\/\s*script\s*>/is',
-                '/&#x[0-9a-f]+;/i',  // HTML encoded characters
+                '/&#x[0-9a-f]+;/i',
                 '/<\s*\/?\s*script\s*>/i',
 
-                // Event handlers and javascript: URLs
-                '/on\w+\s*=\s*["\']?[^"\']*["\']?/i',   // e.g., onclick, onerror
+                // Event handlers and javascript URLs
+                '/on\w+\s*=\s*["\']?[^"\']*["\']?/i',
                 '/javascript\s*:/i',
                 '/data\s*:[^;]*;base64,/i',
 
                 // Suspicious tags
                 '/<\s*(iframe|svg|math|embed|object|meta|link|base)[^>]*>/i',
 
-                // CSS expression (old IE XSS vector)
+                // CSS expression
                 '/expression\s*\(/i',
             ];
             foreach ($patterns as $pattern) {
